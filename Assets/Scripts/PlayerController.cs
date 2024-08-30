@@ -13,7 +13,7 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController instance;
 
-    private bool acceptingInputs;
+    public bool acceptingInputs;
     private CharacterController cc;
     private Camera cam;
     Vector2 moveInput;
@@ -95,8 +95,9 @@ public class PlayerController : MonoBehaviour
         else
         {
             velocity += Physics.gravity * Time.deltaTime;
-            cc.Move(velocity * Time.deltaTime);
+            
         }
+        cc.Move(velocity * Time.deltaTime);
     }
     private void Rotate()
     {
@@ -156,6 +157,7 @@ public class PlayerController : MonoBehaviour
         }
         GameObject go = Instantiate(heldObject, heldGraphic.transform.position, heldGraphic.transform.rotation);
         go.SetActive(true);
+        go.name = heldObject.name;
         heldGraphic.SetActive(false);
         Destroy(heldObject);
         speedMultiplier = 1f;

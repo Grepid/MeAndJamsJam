@@ -4,12 +4,19 @@ using UnityEngine;
 
 public class RockDropZone : MonoBehaviour
 {
-    private void OnCollisionEnter(Collision collision)
+    public int rocksCollected;
+    private void OnTriggerEnter(Collider other)
     {
-        RockDrop rock = collision.gameObject.GetComponent<RockDrop>();
-        if(rock != null)
+        RockDrop rock = other.gameObject.GetComponent<RockDrop>();
+        if (rock != null)
         {
-
+            RockCollected();
+            Destroy(other.gameObject);
         }
+    }
+    private void RockCollected()
+    {
+        rocksCollected++;
+        print(rocksCollected);
     }
 }

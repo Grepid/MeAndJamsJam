@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3644541311435532505}
   - component: {fileID: -2145449348912449277}
   - component: {fileID: 9169226933352230864}
-  - component: {fileID: 3109233361266367070}
+  - component: {fileID: 8516127304119104169}
   m_Layer: 0
   m_Name: ShinyGem
   m_TagString: Untagged
@@ -43,7 +43,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8305930344577299029}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 4493585093827132993, guid: 20d18f79d11ce3e438fff6e587847a6a, type: 3}
 --- !u!23 &3644541311435532505
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10302, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: ef7721adc1747774a8c164eece997d5d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -114,8 +114,8 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!135 &3109233361266367070
-SphereCollider:
+--- !u!136 &8516127304119104169
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -124,6 +124,7 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 0.38
+  m_Height: 1.7454045
+  m_Direction: 1
+  m_Center: {x: 0.0049758106, y: 0.052590936, z: 0.004618883}
