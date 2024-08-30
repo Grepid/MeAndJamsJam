@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     public float horizontalMouse;
     public float verticalMouse;
     private Vector3 velocity;
-    public Transform groundCheck;
+    Transform groundCheck;
     public float groundDistance;
     public LayerMask groundLayerMask;
     bool isGrounded;
@@ -31,6 +31,12 @@ public class PlayerController : MonoBehaviour
     public GameObject heldGraphic;
     private MeshRenderer heldMeshRenderer;
     private MeshFilter heldMeshFilter;
+
+    public Light flashlight;
+
+    [Tooltip("In seconds")]
+    public float FlashlightCharge;
+    public float FlashlightMaxCharge;
     Vector3 moveDirection
     {
         get
@@ -72,6 +78,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space)) Jump();
         if (Input.GetKeyDown(KeyCode.E)) Interact();
+        if (Input.GetKeyDown(KeyCode.F)) ToggleFlashlight();
     }
     private void Jump()
     {
@@ -110,6 +117,8 @@ public class PlayerController : MonoBehaviour
         moveInput.y = Input.GetAxis("Vertical");
 
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundLayerMask);
+
+        if (flashlight.gameObject.activeSelf) ChargeFlashlight(-Time.deltaTime);
     }
     private void Interact()
     {
@@ -150,5 +159,15 @@ public class PlayerController : MonoBehaviour
         heldGraphic.SetActive(false);
         Destroy(heldObject);
         speedMultiplier = 1f;
+    }
+    public void ToggleFlashlight()
+    {
+        if (FlashlightCharge <= 0) return;
+        flashlight.gameObject.SetActive(!flashlight.gameObject.activeSelf);
+    }
+    public void ChargeFlashlight(float chargeAmount)
+    {
+        FlashlightCharge = Mathf.Clamp(FlashlightCharge + chargeAmount, 0, FlashlightMaxCharge);
+        if(FlashlightCharge <= 0) flashlight.gameObject.SetActive(false);
     }
 }
