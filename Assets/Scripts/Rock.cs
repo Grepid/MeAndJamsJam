@@ -1,3 +1,4 @@
+using AudioSystem;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,7 +23,7 @@ public class Rock : MonoBehaviour,Iinteractable
 
     public void Interact()
     {
-        //Play hit noise
+        AudioManager.Play("TempMining", transform.position);
         health--;
         if(health <= 0)
         {
