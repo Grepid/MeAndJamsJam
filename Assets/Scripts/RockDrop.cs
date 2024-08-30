@@ -6,6 +6,7 @@ public class RockDrop : MonoBehaviour,Iinteractable
 {
     private void Start()
     {
+        return;
         Debug.DrawRay(transform.position, PlayerController.instance.transform.position - transform.position,Color.red,5f);
         if(Physics.Raycast(transform.position,PlayerController.instance.transform.position-transform.position, out RaycastHit hit))
         {

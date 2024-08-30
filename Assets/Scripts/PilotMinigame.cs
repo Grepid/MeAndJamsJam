@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PilotMinigame : MonoBehaviour
+public class PilotMinigame : MonoBehaviour,Iinteractable
 {
     public bool isAcceptingInputs;
     public Canvas canvas;
@@ -13,6 +13,9 @@ public class PilotMinigame : MonoBehaviour
     public Image obstacleImage;
     public GameObject destination;
     public Image destinationImage;
+
+    private float lastUseTime;
+    public float useCooldown;
 
     // Update is called once per frame
     void Update()
@@ -25,23 +28,34 @@ public class PilotMinigame : MonoBehaviour
 
     private void Inputs()
     {
-
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            ToggleActive();
+        }
     }
 
+    public void Interact()
+    {
+        ToggleActive();
+    }
 
-
-
-
-
-
-
+    private void AdjustCamera()
+    {
+        Camera c = Camera.main;
+        c.transform.position = canvas.transform.position + (canvas.transform.forward * 3);
+        c.transform.LookAt(canvas.transform.position);
+    }
 
 
 
 
     public void ToggleActive()
     {
+        if (Time.time < lastUseTime + useCooldown) return;
+        if(!isAcceptingInputs) AdjustCamera();
+        lastUseTime = Time.time;
         isAcceptingInputs = !isAcceptingInputs;
         PlayerController.instance.acceptingInputs = !PlayerController.instance.acceptingInputs;
+        PlayerController.instance.Pickaxe.SetActive(!PlayerController.instance.Pickaxe.activeSelf);
     }
 }

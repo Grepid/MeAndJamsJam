@@ -33,6 +33,12 @@ public class PlayerController : MonoBehaviour
     private MeshFilter heldMeshFilter;
 
     public Light flashlight;
+    public GameObject Pickaxe;
+    private Coroutine pickaxeSwing;
+    private Vector3 pickaxeRestRot;
+
+    public float interactRange;
+    public LayerMask interactLayerMask;
 
     [Tooltip("In seconds")]
     public float FlashlightCharge;
@@ -62,12 +68,14 @@ public class PlayerController : MonoBehaviour
         groundCheck = transform.Find("GroundCheckLocation");
         heldMeshFilter = heldGraphic.GetComponent<MeshFilter>();
         heldMeshRenderer = heldGraphic.GetComponent<MeshRenderer>();
+        pickaxeRestRot = Pickaxe.transform.localRotation.eulerAngles;
     }
     private void Update()
     {
-        AssignVariables();
-        if (!acceptingInputs)
+        
+        if (acceptingInputs)
         {
+            AssignVariables();
             Move();
             Rotate();
             CheckInputs();
@@ -78,6 +86,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space)) Jump();
         if (Input.GetKeyDown(KeyCode.E)) Interact();
+        if (Input.GetMouseButtonDown(0)) RockInteract();
         if (Input.GetKeyDown(KeyCode.F)) ToggleFlashlight();
     }
     private void Jump()
@@ -103,6 +112,7 @@ public class PlayerController : MonoBehaviour
     {
         transform.eulerAngles = new Vector3(0, lookXY.x, 0);
         cam.transform.eulerAngles = new Vector3(lookXY.y, lookXY.x, 0);
+        cam.transform.localPosition = new Vector3(0, 0.58f, 0);
     }
 
     private void AssignVariables()
@@ -129,11 +139,32 @@ public class PlayerController : MonoBehaviour
             return;
         }
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
-        Physics.Raycast(ray, out RaycastHit hit);
+        Physics.Raycast(ray,out RaycastHit hit, interactRange,interactLayerMask,QueryTriggerInteraction.Ignore);
+        if (hit.collider == null) return;
+        print(hit.collider.gameObject.name);
+        Iinteractable interact = hit.collider.GetComponent<Iinteractable>();
+        if (interact == null) return;
+        if (interact as Rock != null) return;
+        interact.Interact();
+    }
+
+    private void RockInteract()
+    {
+        if (heldObject != null)
+        {
+            DropObject();
+            return;
+        }
+        Ray ray = new Ray(cam.transform.position, cam.transform.forward);
+        Physics.Raycast(ray, out RaycastHit hit, interactRange, interactLayerMask, QueryTriggerInteraction.Ignore);
         if (hit.collider == null) return;
         Iinteractable interact = hit.collider.GetComponent<Iinteractable>();
         if (interact == null) return;
-        interact.Interact();
+        if (interact as Rock != null)
+        {
+            SwingPickaxe();
+            interact.Interact();
+        }
     }
 
     public void HoldObject(GameObject go)
@@ -171,5 +202,33 @@ public class PlayerController : MonoBehaviour
     {
         FlashlightCharge = Mathf.Clamp(FlashlightCharge + chargeAmount, 0, FlashlightMaxCharge);
         if(FlashlightCharge <= 0) flashlight.gameObject.SetActive(false);
+    }
+    public void SwingPickaxe()
+    {
+        if(pickaxeSwing != null)
+        {
+            StopCoroutine(pickaxeSwing);
+            Pickaxe.transform.localRotation = Quaternion.Euler(pickaxeRestRot);
+        }
+        pickaxeSwing = StartCoroutine(SwingPick());
+    }
+
+    //The single worst bit of code I've ever wrote
+    public IEnumerator SwingPick()
+    {
+        while(true)
+        {
+            float x = Pickaxe.transform.localRotation.eulerAngles.x + (500 * Time.deltaTime);
+            Pickaxe.transform.localRotation = Quaternion.Euler(new Vector3(Mathf.Clamp(x, pickaxeRestRot.x, 55), pickaxeRestRot.y, pickaxeRestRot.z));
+            if (Mathf.Approximately(Pickaxe.transform.localRotation.eulerAngles.x,55)) break;
+            yield return null;
+        }
+        while (Pickaxe.transform.localRotation.eulerAngles.x != pickaxeRestRot.x)
+        {
+            float x = Pickaxe.transform.localRotation.eulerAngles.x + (500 * -Time.deltaTime);
+            Pickaxe.transform.localRotation = Quaternion.Euler(new Vector3(Mathf.Clamp(x, pickaxeRestRot.x, 55), pickaxeRestRot.y, pickaxeRestRot.z));
+            if (Pickaxe.transform.localRotation.eulerAngles.x == pickaxeRestRot.x) break;
+            yield return null;
+        }
     }
 }
