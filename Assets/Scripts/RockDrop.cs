@@ -6,8 +6,7 @@ public class RockDrop : MonoBehaviour,Iinteractable
 {
     private void Start()
     {
-        return;
-        Debug.DrawRay(transform.position, PlayerController.instance.transform.position - transform.position,Color.red,5f);
+        /*Debug.DrawRay(transform.position, PlayerController.instance.transform.position - transform.position,Color.red,5f);
         if(Physics.Raycast(transform.position,PlayerController.instance.transform.position-transform.position, out RaycastHit hit))
         {
             if(hit.collider.gameObject.name != "Player")
@@ -25,7 +24,7 @@ public class RockDrop : MonoBehaviour,Iinteractable
                     NudgeRock();
                 }
             }
-        }
+        }*/
     }
 
     private void NudgeRock()

@@ -141,7 +141,6 @@ public class PlayerController : MonoBehaviour
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
         Physics.Raycast(ray,out RaycastHit hit, interactRange,interactLayerMask,QueryTriggerInteraction.Ignore);
         if (hit.collider == null) return;
-        print(hit.collider.gameObject.name);
         Iinteractable interact = hit.collider.GetComponent<Iinteractable>();
         if (interact == null) return;
         if (interact as Rock != null) return;
