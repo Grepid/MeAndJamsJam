@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,7 +14,7 @@ public class PilotMinigame : MonoBehaviour,Iinteractable
     public Canvas canvas;
     private GameObject ship;
     public Image shipImage;
-    private List<GameObject> obstacles;
+    private List<GameObject> obstacles = new List<GameObject>();
     public Image obstacleImage;
     private GameObject destination;
     public Image destinationImage;
@@ -48,9 +49,16 @@ public class PilotMinigame : MonoBehaviour,Iinteractable
         }
     }
 
+    private float moveDirection;
+
     private void GameInputs()
     {
         if(Input.GetMouseButton(0) && !isPlaying) StartGame();
+        if (isPlaying)
+        {
+            OverlapChecks();
+            moveDirection = Input.GetAxis("Horizontal");
+        }
     }
 
     public void Interact()
@@ -78,6 +86,8 @@ public class PilotMinigame : MonoBehaviour,Iinteractable
         //Make this the top so it goes down
         ship = MakeNew("Ship");
         destination = MakeNew("Destination");
+        destination.transform.position *= 1000;
+        obstacles.Add(MakeNew("Enemy"));
     }
     private GameObject MakeNew(string name)
     {
@@ -90,6 +100,51 @@ public class PilotMinigame : MonoBehaviour,Iinteractable
         return go;
     }
 
+    private void OverlapChecks()
+    {
+        if (ship == null) return;
+        if (destination == null) return;
+
+        if (IsOverlapping(ship, destination)) Win();
+        foreach(GameObject obstacle in obstacles)
+        {
+            if (obstacle == null) continue;
+            if (IsOverlapping(obstacle, ship)) Lose();
+        }
+    }
+
+
+    private bool IsOverlapping(GameObject A,GameObject B)
+    {
+        var image1rect = A.GetComponent<RectTransform>().rect;
+        var image2rect = B.GetComponent<RectTransform>().rect;
+
+        var image1rt = A.GetComponent<RectTransform>();
+        var image2rt = B.GetComponent<RectTransform>();
+
+        if (image1rt.localPosition.x < image2rt.localPosition.x + image2rect.width &&
+            image1rt.localPosition.x + image1rect.width > image2rt.localPosition.x &&
+            image1rt.localPosition.y < image2rt.localPosition.y + image2rect.height &&
+            image1rt.localPosition.y + image1rect.height > image2rt.localPosition.y)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private void Win()
+    {
+        print("Won");
+    }
+    private void Lose()
+    {
+        print("Lost");
+        gameObject.AddComponent<PilotMinigame>();
+        Destroy(this);
+    }
 
 
 
